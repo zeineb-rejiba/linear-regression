@@ -6,6 +6,17 @@ from model import Model
 import tensorflow as tf
 import numpy as np
 
+
+def plot_scatter(df):
+    ax = df.plot.scatter(x='population',
+                         y='profit',
+                         c='Red',
+                         marker='x')
+    ax.set_xlabel('Population of City in 10,000s')
+    ax.set_ylabel("Profit in $10,000s")
+    plt.savefig('figs/scatter_plot_training_data')
+
+
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
@@ -26,6 +37,19 @@ if __name__ == "__main__":
     action = args.action
     plot_type = args.plot_type
 
+    if regression_type == 'univariate':
+        data_path = 'data/ex1data1.txt'
+        col_names = ['population', 'profit']
+    else:
+        data_path = 'data/ex1data2.txt'
+        col_names = ['', '']
+
+    # load data
+    df = pd.read_csv(data_path, names=col_names, sep=',', dtype=np.float64, header=None)
+    cols = df.columns
+    X = df[cols[:-1]]  # define the features as the set of all columns of the dataframe except the last one
+    y = df[cols[-1]]  # the last column of the dataframe corresponds to the target values
+
     if action == 'plot':
 
         if not plot_type:  # deal with the case where the user has chosen to plot but hasn't specified a plot_type.
@@ -38,7 +62,8 @@ if __name__ == "__main__":
                     sys.exit('The selected plot_type is not supported for this regression type.')
                 else:
                     if plot_type == 'scatter':
-                        print('plotting ', plot_type)
+                        
+                        plot_scatter(df)
 
                     elif plot_type == 'data-with-line':
                         print('plotting ', plot_type)
@@ -58,18 +83,7 @@ if __name__ == "__main__":
         else:
             # perform the corresponding action
             if action == 'train':
-                if regression_type == 'univariate':
-                    data_path = 'data/ex1data1.txt'
-                else:
-                    data_path = 'data/ex1data2.txt'
 
-                # load data
-                df = pd.read_csv(data_path, sep=',', dtype=np.float64, header=None)
-                cols = df.columns
-                X = df[cols[:-1]]  # define the features as the set of all columns of the dataframe except the last one
-                y = df[cols[-1]]  # the last column of the dataframe corresponds to the target values
-
-                print('x shape before insert ', X.shape)
                 X.insert(0, 'intercept',
                          1.0)  # insert a column of 1s to the left of X. This is to account for the intercept term.
                 print('x shape after insert ', X.shape)
@@ -85,10 +99,10 @@ if __name__ == "__main__":
                 y = tf.convert_to_tensor(y.to_numpy(), dtype=tf.float32)
                 # initialize model
                 model = Model(X.shape[1])
-                #model.calculate_loss(y, predicted_y=model.predict(X))
+                # model.calculate_loss(y, predicted_y=model.predict(X))
 
                 # train model
                 model.train(1500, X, y, learning_rate=0.01)
 
-                #save weights
+                # save weights
                 model.save(regression_type)
