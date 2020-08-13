@@ -1,10 +1,16 @@
+import argparse
+import pickle
+import sys
+from os import listdir
+from os.path import isfile, join
+
 import matplotlib.pyplot as plt
-import argparse, sys
-import pandas as pd
-from sklearn import preprocessing
-from model import Model
-import tensorflow as tf
 import numpy as np
+import pandas as pd
+import tensorflow as tf
+from sklearn import preprocessing
+
+from model import Model
 
 
 def plot_scatter(df):
@@ -14,7 +20,44 @@ def plot_scatter(df):
                          marker='x')
     ax.set_xlabel('Population of City in 10,000s')
     ax.set_ylabel("Profit in $10,000s")
-    plt.savefig('figs/scatter_plot_training_data')
+    plt.savefig('figs/scatter_plot_training_data.png')
+
+
+def plot_data_with_line(df):
+
+    # check if there is a file called univariate.pkl in model/
+    file_list = [f for f in listdir('model/') if isfile(join('model/', f))]
+    if 'univariate.pkl' in file_list:
+        # load it and retrieve the weights
+        with open('model/univariate.pkl', 'rb') as infile:
+            weights = pickle.load(infile)
+
+        weights = weights.numpy() #retrieve the weights as a numpy array instead of a Tensor object.
+        slope = weights[1][0]  # theta_1
+        intercept = weights[0][0]  # theta_0
+        print('Slope= ', slope)
+        print('Intercept= ', intercept)
+
+        #plot the training data directly from the dataframe
+        ax = df.plot.scatter(x='population',
+                             y='profit',
+                             c='Red',
+                             marker='x',
+                             label='Training data')
+
+        #define the data for plotting the regression line
+        x_list = range(4, 24)
+        y_list = intercept + slope * x_list
+        ax.plot(x_list, y_list, '-b', label='Linear regression')
+
+        #define labels for x- and y- axis
+        ax.set_xlabel('Population of City in 10,000s')
+        ax.set_ylabel("Profit in $10,000s")
+
+        plt.legend()
+        plt.savefig('figs/data_with_line.png')
+    else:
+        sys.exit('There are no model weights. Unable to plot the regression line!')
 
 
 if __name__ == "__main__":
@@ -62,11 +105,12 @@ if __name__ == "__main__":
                     sys.exit('The selected plot_type is not supported for this regression type.')
                 else:
                     if plot_type == 'scatter':
-                        
+
                         plot_scatter(df)
 
                     elif plot_type == 'data-with-line':
-                        print('plotting ', plot_type)
+
+                        plot_data_with_line(df)
 
                     elif plot_type == 'cost-surface':
                         print('plotting ', plot_type)
@@ -99,7 +143,6 @@ if __name__ == "__main__":
                 y = tf.convert_to_tensor(y.to_numpy(), dtype=tf.float32)
                 # initialize model
                 model = Model(X.shape[1])
-                # model.calculate_loss(y, predicted_y=model.predict(X))
 
                 # train model
                 model.train(1500, X, y, learning_rate=0.01)
