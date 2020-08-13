@@ -141,6 +141,7 @@ if __name__ == "__main__":
                 # # convert X and y to tensorflow tensors
                 X = tf.convert_to_tensor(X, dtype=tf.float32)
                 y = tf.convert_to_tensor(y.to_numpy(), dtype=tf.float32)
+                y = tf.reshape(y, [y.shape[0], 1]) #I had to specifically force this reshape, otherwise the dimensions were misinterpreted
                 # initialize model
                 model = Model(X.shape[1])
 
