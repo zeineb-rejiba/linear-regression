@@ -16,9 +16,11 @@ def plot_scatter(df):
     ax.set_xlabel('Population of City in 10,000s')
     ax.set_ylabel("Profit in $10,000s")
     plt.savefig('figs/scatter_plot_training_data.png')
+    print('Saving plot to figs/scatter_plot_training_data.png')
 
 
 def plot_data_with_line(df, weights):
+    weights = weights.numpy()
     slope = weights[1][0]  # theta_1
     intercept = weights[0][0]  # theta_0
     print('Slope= ', slope)
@@ -43,6 +45,7 @@ def plot_data_with_line(df, weights):
 
     plt.legend()
     plt.savefig('figs/data_with_line.png')
+    print('Saving plot to figs/data_with_line.png')
 
 
 if __name__ == "__main__":
@@ -51,7 +54,8 @@ if __name__ == "__main__":
     # Step 2: Linear regression with one variable
     # Step 2.1 Plotting the data
     ###############################################
-
+    print('Step 2: Linear regression with one variable')
+    print('Step 2.1 Plotting the data')
     data_path = 'data/ex1data1.txt'
     col_names = ['population', 'profit']
 
@@ -59,10 +63,11 @@ if __name__ == "__main__":
     df = pd.read_csv(data_path, names=col_names, sep=',', dtype=np.float64, header=None)
 
     plot_scatter(df)
-
+    print('\n')
     ###############################################
     # Step 2.2 Gradient desent
     ###############################################
+    print('Step 2.2 Gradient desent')
 
     cols = df.columns
     X = df[cols[:-1]]  # define the features as the set of all columns of the dataframe except the last one
@@ -83,7 +88,10 @@ if __name__ == "__main__":
     model = Model(X.shape[1])
 
     # train model
-    model.train(10, X, y, learning_rate=0.01)
+    nb_iterations = 10
+    lr = 0.01
+    print('Training model using ', nb_iterations, 'iterations and learning rate=', lr)
+    model.train(nb_iterations, X, y, learning_rate=lr)
 
     ex_x1 = tf.constant([1.0, 3.5], shape=(1, 2))
     ex_y1 = model.predict(ex_x1).numpy()[0][0]
@@ -94,15 +102,20 @@ if __name__ == "__main__":
     ex_y2 = model.predict(ex_x2).numpy()[0][0]
     print('When the size of the population is 70,000 => The predicted profit is {:.2f}$'.format(
         ex_y2 * 10000))
+
+    print('\n')
     ###############################################
     # Step 2.3: Debugging
     ###############################################
+    print('Step 2.3: Debugging')
     plot_data_with_line(df, model.theta)
-
+    print('\n')
     ################################################
     # Step 2.4: Visualizing J(theta)
-    print('Step 2.4: Visualizing J(theta)')
     ################################################
+    print('Step 2.4: Visualizing J(theta)')
+    print('\n')
+
 
     ###############################################
     # Step 3: Linear regression with multiple variables
@@ -123,6 +136,7 @@ if __name__ == "__main__":
     scaler = preprocessing.StandardScaler().fit(X_multi)
     X = scaler.transform(X_multi)
 
+    print('\n')
     ###############################################
     # Step 3.2 Gradient descent
     ###############################################
@@ -144,6 +158,7 @@ if __name__ == "__main__":
     print('Training model using ', nb_iterations, 'iterations and learning rate=', lr)
     model.train(nb_iterations, X, y, learning_rate=lr)
 
+    print('\n')
     ###############################################
     # Step 3.2.1 Selecting learning rates
     ###############################################
@@ -183,6 +198,7 @@ if __name__ == "__main__":
         'When the house has an area of 1650 square feet and 3 bedrooms => Its predicted price is {:.2f}$'.format(
             ex_y_multi))
 
+    print('\n')
     ###############################################
     # Step 3.3 Normal equations
     ###############################################

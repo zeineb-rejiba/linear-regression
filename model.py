@@ -18,7 +18,6 @@ class Model(object):
 
     def calculate_loss(self, target_y, predicted_y):
         loss = (tf.reduce_mean(tf.square(target_y - predicted_y))) * 0.5
-        print('Loss=%2.5f' % loss)
         self.losses.append(loss.numpy())
         return loss
 
@@ -35,8 +34,6 @@ class Model(object):
 
     def train(self, nb_iter, X, y, learning_rate):
         for i in range(nb_iter):
-            print('\nIteration= ', i)
-
             self.update(X, y, learning_rate)
         print('Training done!')
 
