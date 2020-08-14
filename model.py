@@ -2,13 +2,6 @@ import tensorflow as tf
 import pickle
 import numpy as np
 
-
-def calculate_loss(target_y, predicted_y):
-    loss = (tf.reduce_mean(tf.square(target_y - predicted_y))) * 0.5
-    print('Loss=%2.5f' % loss)
-    return loss
-
-
 class Model(object):
 
     def __init__(self, vector_size):
@@ -17,15 +10,22 @@ class Model(object):
         #                                         mean=0.0))  # (n+1)-dimensional weight vector, where n is the number of features
 
         self.theta = tf.Variable(tf.zeros([vector_size, 1]))
+        self.losses = []
 
     def predict(self, x):
         y_hat = tf.matmul(x, self.theta)
         return y_hat
 
+    def calculate_loss(self, target_y, predicted_y):
+        loss = (tf.reduce_mean(tf.square(target_y - predicted_y))) * 0.5
+        print('Loss=%2.5f' % loss)
+        self.losses.append(loss.numpy())
+        return loss
+
     def update(self, inputs, outputs, learning_rate):
         with tf.GradientTape() as t:
             y_hat = self.predict(inputs)
-            current_loss = calculate_loss(outputs, y_hat)
+            current_loss = self.calculate_loss(outputs, y_hat)
 
         # calculate the gradient with respect to the weight vector theta
         d_loss_d_theta = t.gradient(current_loss, self.theta)
