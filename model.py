@@ -1,10 +1,13 @@
 import tensorflow as tf
-import pickle
 import numpy as np
 
 class Model(object):
 
     def __init__(self, vector_size):
+        """
+        initializes a linear regression model
+        :param vector_size: (n+1)-dimensional weight vector, where n is the number of features
+        """
         # Initialize weights to random values
         # self.theta = tf.Variable(tf.random.normal([vector_size, 1],
         #                                         mean=0.0))  # (n+1)-dimensional weight vector, where n is the number of features
@@ -13,15 +16,32 @@ class Model(object):
         self.losses = []
 
     def predict(self, x):
+        """
+        performs a prediction for the given input, using the current weight values
+        :param x: an m by (n+1) matrix containing the inputs, where m is the number of rows
+        :return: predicted value
+        """
         y_hat = tf.matmul(x, self.theta)
         return y_hat
 
     def calculate_loss(self, target_y, predicted_y):
+        """
+        calculates the mean squared loss between the target values and the predicted values
+        :param target_y: the target values
+        :param predicted_y: the predicted values
+        :return: the mean squared loss
+        """
         loss = (tf.reduce_mean(tf.square(target_y - predicted_y))) * 0.5
         self.losses.append(loss.numpy())
         return loss
 
     def update(self, inputs, outputs, learning_rate):
+        """
+        updates the weights by performing gradient descient on the entire batch of inputs
+        :param inputs: an m by (n+1) matrix containing the inputs, where m is the number of rows
+        :param outputs: the target values
+        :param learning_rate: the learning rate
+        """
         with tf.GradientTape() as t:
             y_hat = self.predict(inputs)
             current_loss = self.calculate_loss(outputs, y_hat)
@@ -33,16 +53,14 @@ class Model(object):
         self.theta.assign_sub(learning_rate * d_loss_d_theta)  # combines tf.assign and tf.sub
 
     def train(self, nb_iter, X, y, learning_rate):
+        """
+        Trains the linear model for the specified number of iterations
+        :param nb_iter: number of iterations used for training
+        :param X: an m by (n+1) matrix containing the inputs, where m is the number of rows
+        :param y: the target values
+        :param learning_rate: the learning rate
+        """
         for i in range(nb_iter):
             self.update(X, y, learning_rate)
         print('Training done!')
 
-    def save(self, reg_type):
-        save_path = 'model/' + reg_type + '.pkl'
-        with open(save_path, 'wb') as w_file:
-            pickle.dump(self.theta, w_file)
-        print('Saving model weights to: ', save_path)
-
-    def load_from_file(self, weight_file):
-        with open(weight_file, 'rb') as in_file:
-            self.theta = pickle.load(in_file)

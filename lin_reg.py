@@ -8,6 +8,10 @@ from model import Model
 
 
 def plot_scatter(df):
+    """
+    creates a scatter plot from the data points in the provided data frame
+    :param df: training data frame
+    """
     plt.figure()
     ax = df.plot.scatter(x='population',
                          y='profit',
@@ -20,6 +24,11 @@ def plot_scatter(df):
 
 
 def plot_data_with_line(df, weights):
+    """
+    plots the training data as well as the regression line
+    :param df: the training data frame
+    :param weights: the weights/parameters of the regression line
+    """
     weights = weights.numpy()
     slope = weights[1][0]  # theta_1
     intercept = weights[0][0]  # theta_0
@@ -88,7 +97,7 @@ if __name__ == "__main__":
     model = Model(X.shape[1])
 
     # train model
-    nb_iterations = 10
+    nb_iterations = 1500
     lr = 0.01
     print('Training model using ', nb_iterations, 'iterations and learning rate=', lr)
     model.train(nb_iterations, X, y, learning_rate=lr)
