@@ -1,5 +1,6 @@
 import tensorflow as tf
 import pickle
+import numpy as np
 
 
 def calculate_loss(target_y, predicted_y):
@@ -44,3 +45,7 @@ class Model(object):
         with open(save_path, 'wb') as w_file:
             pickle.dump(self.theta, w_file)
         print('Saving model weights to: ', save_path)
+
+    def load_from_file(self, weight_file):
+        with open(weight_file, 'rb') as in_file:
+            self.theta = pickle.load(in_file)
