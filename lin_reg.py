@@ -8,7 +8,6 @@ from model import Model
 
 
 def plot_scatter(df):
-
     plt.figure()
     ax = df.plot.scatter(x='population',
                          y='profit',
@@ -118,11 +117,11 @@ if __name__ == "__main__":
     # load data
     df = pd.read_csv(data_path, names=col_names, sep=',', dtype=np.float64, header=None)
     cols = df.columns
-    X = df[cols[:-1]]  # define the features as the set of all columns of the dataframe except the last one
+    X_multi = df[cols[:-1]]  # define the features as the set of all columns of the dataframe except the last one
     y = df[cols[-1]]  # the last column of the dataframe corresponds to the target values
 
-    scaler = preprocessing.StandardScaler().fit(X)
-    X = scaler.transform(X)
+    scaler = preprocessing.StandardScaler().fit(X_multi)
+    X = scaler.transform(X_multi)
 
     ###############################################
     # Step 3.2 Gradient descent
@@ -167,14 +166,14 @@ if __name__ == "__main__":
     plt.legend()
     plt.savefig('figs/different_learning_rates')
 
-    #from the figure it looks like lr=0.3 is the best one. So, training will be performed using this value.
+    # from the figure it looks like lr=0.3 is the best one. So, training will be performed using this value.
     model = Model(X.shape[1])
     lr = 0.3
     nb_iterations = 500
     print('Training model using ', nb_iterations, 'iterations and learning rate=', lr)
     model.train(nb_iterations, X, y, learning_rate=lr)
 
-    #when the regression is with multiple variables we need to take into account the feature scaling
+    # when the regression is with multiple variables we need to take into account the feature scaling
     x_multi_scaled = scaler.transform(np.array([1650, 3]).reshape(1,
                                                                   -1))  # use the scaler to apply the same transformation as the training data
     ex_x_multi = tf.constant(np.concatenate([np.ones((1, 1)), x_multi_scaled], axis=1), shape=(1, 3),
@@ -184,3 +183,18 @@ if __name__ == "__main__":
         'When the house has an area of 1650 square feet and 3 bedrooms => Its predicted price is {:.2f}$'.format(
             ex_y_multi))
 
+    ###############################################
+    # Step 3.3 Normal equations
+    ###############################################
+    print('Step 3.3 Normal equations')
+
+    #feature scaling is not needed, so we use X_multi which are the features before scaling.
+    X = X_multi.to_numpy()
+    X = np.concatenate([np.ones((X.shape[0], 1)), X],
+                       axis=1)  # insert a column of 1s to the left of X. This is to account for the intercept term.
+    #we use the @ operator for matrix multiplication whereas the .T corresponds to the transpose operation
+    theta_neq = np.linalg.inv(X.T @ X) @ X.T @ y
+    pred_neq = (np.array([1, 1650, 3]).reshape(1,-1) @ theta_neq).numpy()[0][0]
+    print(
+        'When the house has an area of 1650 square feet and 3 bedrooms => Its predicted price is {:.2f}$'.format(
+            pred_neq))
