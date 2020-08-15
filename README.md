@@ -11,7 +11,13 @@ First, clone the repository.
 ```
 git clone https://github.com/zeineb-rejiba/linear-regression.git
 ```
-Then, go into the cloned project (containing the Dockerfile) and run the following command to build the image with a tag of your choice (here it is `regression-im` ):
+Then, go into the cloned repository:
+
+```
+cd linear-regression
+```
+
+and run the following command to build the image with a tag of your choice (here it is `regression-im` ):
 
     docker build -t regression-im .
 
