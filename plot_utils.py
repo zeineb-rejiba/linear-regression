@@ -63,6 +63,8 @@ def plot_surface_and_contour(w, X, y):
     :param X: the input data
     :param y: the target value
     """
+
+    # define the grid over which we will calculate the loss/cost function J
     theta0 = np.linspace(-10, 10, 100)
     theta1 = np.linspace(-1, 4, 100)
     mse_vals = np.zeros(shape=(theta0.size, theta1.size))

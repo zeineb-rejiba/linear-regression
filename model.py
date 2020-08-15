@@ -1,12 +1,11 @@
 import tensorflow as tf
-import numpy as np
 
 
 class Model(object):
 
     def __init__(self, vector_size):
         """
-        initializes a linear regression model
+        initializes a linear regression model with a weight vector theta
         :param vector_size: (n+1)-dimensional weight vector, where n is the number of features
         """
         # Initialize weights to random values
@@ -58,7 +57,7 @@ class Model(object):
         d_loss_d_theta = t.gradient(current_loss, self.theta)
 
         # update the weights theta_j = theta_j - learning_rate * d_loss_d_theta
-        self.theta.assign_sub(learning_rate * d_loss_d_theta)  # combines tf.assign and tf.sub
+        self.theta.assign_sub(learning_rate * d_loss_d_theta)  #  assign_sub combines tf.assign and tf.sub
 
     def train(self, nb_iter, X, y, learning_rate):
         """
