@@ -1,6 +1,7 @@
 import tensorflow as tf
 import numpy as np
 
+
 class Model(object):
 
     def __init__(self, vector_size):
@@ -14,6 +15,13 @@ class Model(object):
 
         self.theta = tf.Variable(tf.zeros([vector_size, 1]))
         self.losses = []
+
+    def set_weights(self, theta):
+        """
+        set weights using specified theta vector
+        :param theta: a vector of weights
+        """
+        self.theta = theta
 
     def predict(self, x):
         """
@@ -63,4 +71,3 @@ class Model(object):
         for i in range(nb_iter):
             self.update(X, y, learning_rate)
         print('Training done!')
-
