@@ -104,6 +104,27 @@ def plot_surface_and_contour(w, X, y):
     print('Saving plot to figs/surface_and_contour.png')
 
 
+def plot_cost_per_lr(X, y):
+
+    plt.figure()
+    plt.xlabel("Number of iterations")
+    plt.ylabel("Cost J")
+
+    lr_list = [0.3, 0.1, 0.03, 0.01, 0.003, 0.001]
+    losses_per_lr_list = []
+    nb_iterations = 50
+    for i in range(len(lr_list)):
+        lr = lr_list[i]
+        model = Model(X.shape[1])
+        print('Training model using ', nb_iterations, 'iterations and learning rate=', lr)
+        model.train(nb_iterations, X, y, learning_rate=lr)
+        J_history = model.losses
+        losses_per_lr_list.append(J_history)
+        plt.plot(range(nb_iterations), losses_per_lr_list[i], label='alpha= {:.3f}'.format(lr))
+    plt.legend()
+    plt.savefig('figs/different_learning_rates')
+
+
 if __name__ == "__main__":
 
     ###############################################
@@ -221,25 +242,10 @@ if __name__ == "__main__":
     # Step 3.2.1 Selecting learning rates
     ###############################################
     print('Step 3.2.1 Selecting learning rates')
-    plt.figure()
-    plt.xlabel("Number of iterations")
-    plt.ylabel("Cost J")
 
-    lr_list = [0.3, 0.1, 0.03, 0.01, 0.003, 0.001]
-    losses_per_lr_list = []
-    nb_iterations = 50
-    for i in range(len(lr_list)):
-        lr = lr_list[i]
-        model = Model(X.shape[1])
-        print('Training model using ', nb_iterations, 'iterations and learning rate=', lr)
-        model.train(nb_iterations, X, y, learning_rate=lr)
-        J_history = model.losses
-        losses_per_lr_list.append(J_history)
-        plt.plot(range(nb_iterations), losses_per_lr_list[i], label='alpha= {:.3f}'.format(lr))
-    plt.legend()
-    plt.savefig('figs/different_learning_rates')
+    plot_cost_per_lr(X,y)
 
-    # from the figure it looks like lr=0.3 is the best one. So, training will be performed using this value.
+    # from the figure, it looks like lr=0.3 is the best one. So, training will be performed using this value.
     model = Model(X.shape[1])
     lr = 0.3
     nb_iterations = 500
